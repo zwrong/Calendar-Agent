@@ -1,0 +1,9 @@
+caldav>=1.6.0
+icalendar>=5.0.11
+python-dateutil>=2.9.0
+pytz>=2024.1
+requests>=2.32.3
+openai>=1.51.0
+python-dotenv>=1.0.1
+flask>=3.0.3
+deepseek>=0.0.1

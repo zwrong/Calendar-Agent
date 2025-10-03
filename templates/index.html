@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI日程管理助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .chat-container {
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e5e9;
+            border-bottom-left-radius: 5px;
+            white-space: pre-line;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .input-container input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-container input:focus {
+            border-color: #007bff;
+        }
+
+        .input-container button {
+            margin-left: 10px;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .input-container button:hover {
+            background: #0056b3;
+        }
+
+        .input-container button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .examples {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .examples h3 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+
+        .example-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .example-btn {
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .example-btn:hover {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .status.ready {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI日程管理助手</h1>
+            <p>使用自然语言管理您的Apple日历</p>
+        </div>
+
+        <div class="content">
+            <div class="status" id="status">
+                正在初始化日历代理...
+            </div>
+
+            <div class="examples">
+                <h3>💡 试试这些指令：</h3>
+                <div class="example-buttons">
+                    <button class="example-btn" onclick="useExample(this)">查看今天的日程</button>
+                    <button class="example-btn" onclick="useExample(this)">创建明天下午3点和张三的会议</button>
+                    <button class="example-btn" onclick="useExample(this)">添加今天下午2点的团队讨论</button>
+                    <button class="example-btn" onclick="useExample(this)">删除和张三的会议</button>
+                    <button class="example-btn" onclick="useExample(this)">显示可用日历</button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        您好！我是您的AI日程管理助手。
+                        我可以帮您创建、查看、修改和删除日历事件。
+                        请告诉我您想做什么？
+                    </div>
+                </div>
+
+                <div class="input-container">
+                    <input type="text" id="userInput" placeholder="请输入您的指令，例如：创建明天下午3点的会议..." onkeypress="handleKeyPress(event)">
+                    <button id="sendButton" onclick="sendMessage()">发送</button>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                正在处理您的请求...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isProcessing = false;
+
+        // Check agent status on page load
+        fetch('/api/calendars')
+            .then(response => response.json())
+            .then(data => {
+                const statusElement = document.getElementById('status');
+                if (data.success) {
+                    statusElement.textContent = '✅ 日历代理已就绪';
+                    statusElement.className = 'status ready';
+                } else {
+                    statusElement.textContent = '❌ ' + data.message;
+                    statusElement.className = 'status error';
+                }
+            })
+            .catch(error => {
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = '❌ 无法连接到服务器';
+                statusElement.className = 'status error';
+            });
+
+        function useExample(button) {
+            document.getElementById('userInput').value = button.textContent;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            if (isProcessing) return;
+
+            const userInput = document.getElementById('userInput').value.trim();
+            if (!userInput) return;
+
+            // Add user message to chat
+            addMessage(userInput, 'user');
+            document.getElementById('userInput').value = '';
+
+            // Show loading
+            const loadingElement = document.getElementById('loading');
+            loadingElement.style.display = 'block';
+            isProcessing = true;
+
+            // Send to server
+            fetch('/api/command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ command: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                addMessage(data.message, 'bot');
+            })
+            .catch(error => {
+                addMessage('抱歉，处理请求时出现错误。', 'bot');
+            })
+            .finally(() => {
+                loadingElement.style.display = 'none';
+                isProcessing = false;
+            });
+        }
+
+        function addMessage(text, type) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.textContent = text;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
