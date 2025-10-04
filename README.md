@@ -110,7 +110,7 @@ cp config.json config_private.json
 python app.py
 ```
 
-访问 http://localhost:5000 开始使用！
+访问 http://localhost:5002 开始使用！
 
 ## 📋 功能特性
 
