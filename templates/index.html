@@ -284,7 +284,7 @@
 
         <div class="content">
             <div class="status" id="status">
-                正在初始化日历代理...
+                正在初始化AI日程管理助手...
             </div>
 
             <div class="chat-container">
@@ -334,7 +334,7 @@
                 const calendarSelect = document.getElementById('calendarSelect');
 
                 if (data.success) {
-                    statusElement.textContent = '✅ 日历代理已就绪';
+                    statusElement.textContent = '✅ AI日程管理助手已就绪';
                     statusElement.className = 'status ready';
 
                     // Load calendars into selector
@@ -356,7 +356,7 @@
                         calendarSelector.style.display = 'flex';
                     }
                 } else {
-                    statusElement.textContent = '❌ ' + data.message;
+                    statusElement.textContent = '❌ AI日程管理助手未就绪: ' + data.message;
                     statusElement.className = 'status error';
                 }
             })
