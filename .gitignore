@@ -32,6 +32,12 @@ ENV/
 .env.production
 config_private.json
 
+# Claude settings
+.claude/
+
+# Backup files
+templates/index_english_backup.html
+
 # IDE
 .vscode/
 .idea/
