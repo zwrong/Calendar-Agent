@@ -30,6 +30,7 @@ ENV/
 .env
 .env.local
 .env.production
+config_private.json
 
 # IDE
 .vscode/

@@ -21,7 +21,6 @@
 - 📅 **完整日历操作**: 支持创建、查看、更新、删除日历事件
 - 🍎 **Apple日历集成**: 通过CalDAV协议与Apple Calendar无缝集成
 - 🌐 **Web界面**: 提供友好的Web界面进行交互
-- 🇨🇳 **中英双语支持**: 完美支持中文和英文指令
 
 ## 🚀 快速开始
 
@@ -46,25 +45,37 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
-### 3. 配置环境变量
+### 3. 配置文件
 
-复制 `.env.example` 为 `.env` 并填写您的配置：
+项目支持两种配置文件，优先级为：`config_private.json` > `config.json`
+
+#### 推荐做法
+
+**拷贝一份 `config.json`，改名为`config_private.json` ，配置你的API，iCloud账户和iCloud专用APP密码**（推荐）：
 
 ```bash
-cp .env.example .env
+# 可以在电脑上复制粘贴
+
+# 也可以在命令行里输入这个命令
+cp config.json config_private.json
 ```
 
-编辑 `.env` 文件：
+**编辑 `config_private.json` 文件**：
 
-```env
-# Apple Calendar CalDAV配置
-CALDAV_SERVER_URL=https://caldav.icloud.com/
-APPLE_CALENDAR_USERNAME=your_apple_id@icloud.com
-APPLE_CALENDAR_PASSWORD=your_app_specific_password
-
-# DeepSeek API配置
-DEEPSEEK_API_KEY=your_deepseek_api_key
+```json
+{
+  "caldav": {
+    "server_url": "https://caldav.icloud.com/",
+    "username": "your_apple_id@icloud.com",
+    "password": "your_app_specific_password"
+  },
+  "deepseek": {
+    "api_key": "your_deepseek_api_key"
+  }
+}
 ```
+
+**安全提醒**：`config_private.json` 已在 `.gitignore` 中排除，不会被提交到 GitHub，建议使用此文件存储敏感信息。
 
 #### 获取Apple日历密码
 
@@ -118,7 +129,7 @@ calendar_agent/
 ├── nlp_parser.py             # 基础NLP解析器
 ├── app.py                    # Flask Web应用
 ├── requirements.txt          # 依赖列表
-├── .env.example              # 环境变量示例
+├── config.json               # 配置文件
 └── templates/
     └── index.html            # Web界面
 ```

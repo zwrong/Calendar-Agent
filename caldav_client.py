@@ -14,13 +14,40 @@ class AppleCalendarClient:
         - Primary: https://caldav.icloud.com/
         - Alternative: https://pXX-caldav.icloud.com/ (where XX is server number)
         """
+        import requests
+
+        # 设置更长的超时时间
+        session = requests.Session()
+        session.timeout = 30  # 30秒超时
+
         self.client = caldav.DAVClient(
             url=server_url,
             username=username,
             password=password
         )
-        self.principal = self.client.principal()
-        self.calendars = self.principal.calendars()
+
+        try:
+            print("正在连接 CalDAV 服务器...")
+            print(f"服务器URL: {server_url}")
+            print(f"用户名: {username}")
+
+            self.principal = self.client.principal()
+            print("✓ 成功获取 principal")
+
+            print("正在获取日历列表...")
+            self.calendars = self.principal.calendars()
+            print(f"✓ 成功连接，找到 {len(self.calendars)} 个日历")
+
+            # Print calendar names for debugging
+            for i, cal in enumerate(self.calendars):
+                print(f"  日历 {i+1}: {cal.name}")
+
+        except Exception as e:
+            print(f"❌ CalDAV 连接失败: {e}")
+            print(f"错误类型: {type(e).__name__}")
+            import traceback
+            print(f"详细错误信息:\n{traceback.format_exc()}")
+            raise
 
     def get_calendars(self) -> List[str]:
         """Get list of available calendars"""
@@ -99,69 +126,108 @@ class AppleCalendarClient:
                     start_time: datetime = None,
                     end_time: datetime = None,
                     description: str = None,
-                    location: str = None) -> bool:
+                    location: str = None,
+                    calendar_name: str = None) -> bool:
         """Update an existing event"""
         try:
-            # Find the event
-            event = self.client.object(event_id)
-            ical_data = event.icalendar_component
+            # If calendar_name is specified, only search in that calendar
+            calendars_to_search = [self.get_calendar_by_name(calendar_name)] if calendar_name else self.calendars
 
-            # Update fields
-            if title:
-                ical_data['summary'] = title
-            if start_time:
-                ical_data['dtstart'] = start_time
-            if end_time:
-                ical_data['dtend'] = end_time
-            if description is not None:
-                ical_data['description'] = description
-            if location is not None:
-                ical_data['location'] = location
+            for calendar in calendars_to_search:
+                if not calendar:
+                    continue
 
-            # Save updated event
-            event.data = ical_data.to_ical()
-            return True
+                events = calendar.events()
+                for event in events:
+                    if event.url == event_id:
+                        ical_data = event.icalendar_component
+
+                        # Update fields
+                        if title:
+                            ical_data['summary'] = title
+                        if start_time:
+                            ical_data['dtstart'] = start_time
+                        if end_time:
+                            ical_data['dtend'] = end_time
+                        if description is not None:
+                            ical_data['description'] = description
+                        if location is not None:
+                            ical_data['location'] = location
+
+                        # Save updated event
+                        event.data = ical_data.to_ical()
+                        return True
+
+            print(f"Event not found: {event_id}")
+            return False
         except Exception as e:
             print(f"Error updating event: {e}")
             return False
 
-    def delete_event(self, event_id: str) -> bool:
+    def delete_event(self, event_id: str, calendar_name: str = None) -> bool:
         """Delete an event"""
         try:
-            event = self.client.object(event_id)
-            event.delete()
-            return True
+            print(f"尝试删除事件: {event_id}")  # 调试信息
+
+            # If calendar_name is specified, only search in that calendar
+            calendars_to_search = [self.get_calendar_by_name(calendar_name)] if calendar_name else self.calendars
+
+            for calendar in calendars_to_search:
+                if not calendar:
+                    continue
+
+                events = calendar.events()
+                for event in events:
+                    if str(event.url) == str(event_id):
+                        print(f"找到事件，开始删除: {event.url}")  # 调试信息
+                        event.delete()
+                        print("删除操作完成")  # 调试信息
+                        return True
+
+            print(f"Event not found: {event_id}")
+            return False
         except Exception as e:
             print(f"Error deleting event: {e}")
             return False
 
     def search_events(self, query: str, calendar_name: str = None) -> List[Dict]:
-        """Search events by title or description"""
+        """Search events by title or description, only return future and today's events"""
+        from datetime import datetime
+
         calendar = self.get_calendar_by_name(calendar_name) if calendar_name else self.get_default_calendar()
 
         if not calendar:
             return []
 
-        all_events = calendar.events()
-        matching_events = []
+        # 只搜索近3个月及未来的事件，避免加载所有历史事件
+        current_time = datetime.now()
+        three_months_ago = current_time.replace(day=1) - timedelta(days=90)
 
-        for event in all_events:
-            ical_data = event.icalendar_component
-            title = str(ical_data.get('summary', '')).lower()
-            desc = str(ical_data.get('description', '')).lower()
+        try:
+            # 使用日期范围搜索，避免加载所有事件
+            events = calendar.date_search(start=three_months_ago, end=current_time + timedelta(days=365))
+            matching_events = []
 
-            if query.lower() in title or query.lower() in desc:
-                event_data = {
-                    'id': event.url,
-                    'title': str(ical_data.get('summary', '')),
-                    'start': ical_data.get('dtstart').dt if ical_data.get('dtstart') else None,
-                    'end': ical_data.get('dtend').dt if ical_data.get('dtend') else None,
-                    'description': str(ical_data.get('description', '')),
-                    'location': str(ical_data.get('location', ''))
-                }
-                matching_events.append(event_data)
+            for event in events:
+                ical_data = event.icalendar_component
+                title = str(ical_data.get('summary', '')).lower()
+                desc = str(ical_data.get('description', '')).lower()
 
-        return matching_events
+                if query.lower() in title or query.lower() in desc:
+                    event_data = {
+                        'id': event.url,
+                        'title': str(ical_data.get('summary', '')),
+                        'start': ical_data.get('dtstart').dt if ical_data.get('dtstart') else None,
+                        'end': ical_data.get('dtend').dt if ical_data.get('dtend') else None,
+                        'description': str(ical_data.get('description', '')),
+                        'location': str(ical_data.get('location', ''))
+                    }
+                    matching_events.append(event_data)
+
+            return matching_events
+        except Exception as e:
+            print(f"搜索事件时出错: {e}")
+            return []
 
     def get_calendar_by_name(self, name: str):
         """Get calendar by name"""

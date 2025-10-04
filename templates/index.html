@@ -13,36 +13,43 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f9f8f4;
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
+
 
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            background: #ffffff;
+            color: #1c1c1c;
             padding: 30px;
             text-align: center;
+            border-bottom: 1px solid #dee2e6;
         }
 
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
+            font-size: 2.8em;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #1c1c1c;
         }
 
         .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            font-size: 1.3em;
+            color: #6c757d;
         }
 
         .content {
@@ -50,39 +57,41 @@
         }
 
         .chat-container {
-            border: 2px solid #e1e5e9;
-            border-radius: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            background: #ffffff;
         }
 
         .chat-messages {
-            height: 300px;
+            height: 320px;
             overflow-y: auto;
-            padding: 20px;
-            background: #f8f9fa;
+            padding: 24px;
+            background: #ffffff;
         }
 
         .message {
-            margin-bottom: 15px;
-            padding: 12px 16px;
-            border-radius: 18px;
-            max-width: 80%;
-            line-height: 1.4;
+            margin-bottom: 18px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            max-width: 85%;
+            line-height: 1.6;
+            font-size: 17px;
         }
 
         .user-message {
-            background: #007bff;
-            color: white;
+            background: #586953;
+            color: #ffffff;
             margin-left: auto;
-            border-bottom-right-radius: 5px;
+            border-bottom-right-radius: 6px;
         }
 
         .bot-message {
-            background: white;
-            color: #333;
-            border: 1px solid #e1e5e9;
-            border-bottom-left-radius: 5px;
+            background: #f8f9fa;
+            color: #1c1c1c;
+            border: 1px solid #dee2e6;
+            border-bottom-left-radius: 6px;
             white-space: pre-line;
         }
 
@@ -90,95 +99,161 @@
             display: flex;
             padding: 20px;
             background: white;
-            border-top: 1px solid #e1e5e9;
+            border-top: 1px solid #dee2e6;
         }
 
         .input-container input {
             flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 25px;
-            font-size: 16px;
+            padding: 16px 24px;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            font-size: 17px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.2s;
+            background: #ffffff;
+            color: #1c1c1c;
+        }
+
+        .input-container input::placeholder {
+            color: #adb5bd;
         }
 
         .input-container input:focus {
-            border-color: #007bff;
+            border-color: #586953;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(88, 105, 83, 0.1);
+        }
+
+        .calendar-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .calendar-selector label {
+            font-size: 15px;
+            color: #495057;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .calendar-selector select {
+            padding: 10px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: #ffffff;
+            font-size: 15px;
+            outline: none;
+            cursor: pointer;
+            min-width: 180px;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: #343a40;
+        }
+
+        .calendar-selector select:hover {
+            border-color: #586953;
+            background: #ffffff;
+        }
+
+        .calendar-selector select:focus {
+            border-color: #586953;
+            box-shadow: 0 0 0 3px rgba(88, 105, 83, 0.15);
+            background: #ffffff;
         }
 
         .input-container button {
-            margin-left: 10px;
-            padding: 12px 24px;
-            background: #007bff;
-            color: white;
+            margin-left: 12px;
+            padding: 16px 32px;
+            background: #586953;
+            color: #ffffff;
             border: none;
-            border-radius: 25px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 17px;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.2s;
+            font-weight: 500;
         }
 
         .input-container button:hover {
-            background: #0056b3;
+            background: #495845;
+            transform: translateY(-1px);
         }
 
         .input-container button:disabled {
-            background: #6c757d;
+            background: #adb5bd;
             cursor: not-allowed;
+            transform: none;
         }
 
         .examples {
             background: #f8f9fa;
             padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+            margin-top: 16px;
         }
 
         .examples h3 {
-            margin-bottom: 15px;
-            color: #495057;
+            margin-bottom: 16px;
+            color: #343a40;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
         }
 
         .example-buttons {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
         }
 
         .example-btn {
-            padding: 10px 15px;
-            background: white;
+            padding: 14px 18px;
+            background: #ffffff;
             border: 1px solid #dee2e6;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            text-align: left;
-            transition: all 0.3s;
-            font-size: 14px;
+            text-align: center;
+            transition: all 0.2s;
+            font-size: 15px;
+            color: #343a40;
         }
 
         .example-btn:hover {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
+            background: #586953;
+            color: #ffffff;
+            border-color: #586953;
+            transform: translateY(-1px);
         }
 
         .status {
             text-align: center;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 500;
+            font-size: 14px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #343a40;
         }
 
         .status.ready {
-            background: #d4edda;
+            background: #e8f5e8;
             color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         .status.error {
             background: #f8d7da;
             color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .loading {
@@ -186,30 +261,30 @@
             text-align: center;
             color: #6c757d;
             font-style: italic;
+            padding: 20px;
+            font-size: 16px;
+        }
+
+        .bottom-annotation {
+            color: #d33f3f;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 20px;
+            padding: 16px;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
         <div class="header">
             <h1>🤖 AI日程管理助手</h1>
-            <p>使用自然语言管理您的Apple日历</p>
+            <p>使用自然语言管理您的日历</p>
         </div>
 
         <div class="content">
             <div class="status" id="status">
                 正在初始化日历代理...
-            </div>
-
-            <div class="examples">
-                <h3>💡 试试这些指令：</h3>
-                <div class="example-buttons">
-                    <button class="example-btn" onclick="useExample(this)">查看今天的日程</button>
-                    <button class="example-btn" onclick="useExample(this)">创建明天下午3点和张三的会议</button>
-                    <button class="example-btn" onclick="useExample(this)">添加今天下午2点的团队讨论</button>
-                    <button class="example-btn" onclick="useExample(this)">删除和张三的会议</button>
-                    <button class="example-btn" onclick="useExample(this)">显示可用日历</button>
-                </div>
             </div>
 
             <div class="chat-container">
@@ -222,8 +297,22 @@
                 </div>
 
                 <div class="input-container">
+                    <div class="calendar-selector" id="calendarSelector" style="display: none;">
+                        <label for="calendarSelect">📅 选择日历：</label>
+                        <select id="calendarSelect">
+                        </select>
+                    </div>
                     <input type="text" id="userInput" placeholder="请输入您的指令，例如：创建明天下午3点的会议..." onkeypress="handleKeyPress(event)">
                     <button id="sendButton" onclick="sendMessage()">发送</button>
+                </div>
+            </div>
+
+            <div class="examples">
+                <h3>💡 试试这些指令：</h3>
+                <div class="example-buttons">
+                    <button class="example-btn" onclick="useExample(this)">查看今天的日程</button>
+                    <button class="example-btn" onclick="useExample(this)">添加明天下午3点和张三的会议</button>
+                    <button class="example-btn" onclick="useExample(this)">删除和张三的会议</button>
                 </div>
             </div>
 
@@ -236,14 +325,36 @@
     <script>
         let isProcessing = false;
 
-        // Check agent status on page load
+        // Check agent status and load calendars on page load
         fetch('/api/calendars')
             .then(response => response.json())
             .then(data => {
                 const statusElement = document.getElementById('status');
+                const calendarSelector = document.getElementById('calendarSelector');
+                const calendarSelect = document.getElementById('calendarSelect');
+
                 if (data.success) {
                     statusElement.textContent = '✅ 日历代理已就绪';
                     statusElement.className = 'status ready';
+
+                    // Load calendars into selector
+                    if (data.calendars && data.calendars.length > 0) {
+                        // Clear existing options
+                        while (calendarSelect.options.length > 0) {
+                            calendarSelect.remove(0);
+                        }
+
+                        // Add calendar options (no "all" option)
+                        data.calendars.forEach(calendar => {
+                            const option = document.createElement('option');
+                            option.value = calendar;
+                            option.textContent = calendar;
+                            calendarSelect.appendChild(option);
+                        });
+
+                        // Show calendar selector
+                        calendarSelector.style.display = 'flex';
+                    }
                 } else {
                     statusElement.textContent = '❌ ' + data.message;
                     statusElement.className = 'status error';
@@ -271,6 +382,8 @@
             const userInput = document.getElementById('userInput').value.trim();
             if (!userInput) return;
 
+            console.log('📝 Sending command:', userInput);
+
             // Add user message to chat
             addMessage(userInput, 'user');
             document.getElementById('userInput').value = '';
@@ -280,19 +393,36 @@
             loadingElement.style.display = 'block';
             isProcessing = true;
 
+            // Get selected calendar (default to first calendar if none selected)
+            const calendarSelect = document.getElementById('calendarSelect');
+            let selectedCalendar = calendarSelect ? calendarSelect.value : null;
+
+            // If no calendar selected, use the first available calendar
+            if (!selectedCalendar && calendarSelect && calendarSelect.options.length > 0) {
+                selectedCalendar = calendarSelect.options[0].value;
+            }
+
             // Send to server
             fetch('/api/command', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ command: userInput })
+                body: JSON.stringify({
+                    command: userInput,
+                    calendar: selectedCalendar
+                })
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('📡 Response status:', response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log('📡 Response data:', data);
                 addMessage(data.message, 'bot');
             })
             .catch(error => {
+                console.error('❌ Request error:', error);
                 addMessage('抱歉，处理请求时出现错误。', 'bot');
             })
             .finally(() => {

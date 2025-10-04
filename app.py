@@ -1,10 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-import os
-from dotenv import load_dotenv
 
 from calendar_agent_deepseek import CalendarAgentDeepSeek
-
-load_dotenv()
 
 app = Flask(__name__)
 
@@ -30,6 +26,7 @@ def process_command():
 
     data = request.get_json()
     user_input = data.get('command', '').strip()
+    selected_calendar = data.get('calendar', None)
 
     if not user_input:
         return jsonify({
@@ -38,7 +35,7 @@ def process_command():
         })
 
     try:
-        response = agent.process_command(user_input)
+        response = agent.process_command(user_input, selected_calendar)
         return jsonify({
             'success': True,
             'message': response
@@ -61,7 +58,8 @@ def get_calendars():
         calendars = agent.get_calendar_list()
         return jsonify({
             'success': True,
-            'message': calendars
+            'calendars': calendars,
+            'message': agent.get_calendar_list_formatted()
         })
     except Exception as e:
         return jsonify({
@@ -70,4 +68,4 @@ def get_calendars():
         })
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    app.run(debug=True, host='0.0.0.0', port=5002)
