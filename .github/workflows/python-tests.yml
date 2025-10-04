@@ -28,7 +28,7 @@ jobs:
 
     - name: Check syntax
       run: |
-        python -m py_compile app.py caldav_client.py deepseek_parser.py calendar_agent_deepseek.py nlp_parser.py
+        python -m py_compile app.py caldav_client.py deepseek_parser.py calendar_agent_deepseek.py
 
     - name: Test imports
       run: |

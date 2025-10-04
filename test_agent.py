@@ -4,11 +4,11 @@ Test script for Calendar Agent
 This script tests the NLP parsing without requiring actual calendar credentials
 """
 
-from nlp_parser import CalendarNLPParser
+from deepseek_parser import DeepSeekCalendarParser
 
 def test_nlp_parsing():
     """Test NLP parsing with various commands"""
-    parser = CalendarNLPParser()
+    parser = DeepSeekCalendarParser()
 
     test_commands = [
         # Chinese commands
@@ -31,7 +31,7 @@ def test_nlp_parsing():
 
     for cmd in test_commands:
         print(f"\n📝 Input: {cmd}")
-        result = parser.parse_intent(cmd)
+        result = parser.parse_command(cmd)
         print(f"🎯 Intent: {result['intent']} (confidence: {result['confidence']:.2f})")
         print(f"📋 Details:")
         for key, value in result.items():
