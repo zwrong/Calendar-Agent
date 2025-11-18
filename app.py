@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
+import os
 
 from calendar_agent_deepseek import CalendarAgentDeepSeek
 
 app = Flask(__name__)
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
 
 # Initialize the calendar agent
 try:
@@ -35,7 +37,21 @@ def process_command():
         })
 
     try:
-        response = agent.process_command(user_input, selected_calendar)
+        # 获取历史消息（最多10条）
+        history = session.get('chat_history', [])
+        if not isinstance(history, list):
+            history = []
+
+        # 调用代理，传入历史消息
+        response = agent.process_command(user_input, selected_calendar, history=history)
+
+        # 追加当前轮对话到历史并裁剪长度
+        history.append({'role': 'user', 'content': user_input})
+        history.append({'role': 'assistant', 'content': response})
+        if len(history) > 10:
+            history = history[-10:]
+        session['chat_history'] = history
+
         return jsonify({
             'success': True,
             'message': response

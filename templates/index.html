@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI日程管理助手</title>
+    <title>日历助手</title>
     <style>
         * {
             margin: 0;
@@ -11,9 +11,62 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg: #f6f7f9;
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border: #e5e7eb;
+            --muted-bg: #f8fafc;
+            --accent: #6B7280;
+            --accent-hover: #5F6674;
+            --accent-shadow: rgba(107, 114, 128, 0.15);
+            --placeholder: #9ca3af;
+            --user-msg-bg: #6B7280;
+            --user-msg-text: #ffffff;
+            --bot-msg-bg: #f8fafc;
+            --bot-msg-border: #e5e7eb;
+            --bot-msg-text: #1f2937;
+            --status-ready-bg: #eef6ee;
+            --status-ready-text: #2f5132;
+            --status-ready-border: #dbe7dc;
+            --status-error-bg: #f7ecef;
+            --status-error-text: #6b2c30;
+            --status-error-border: #e7c9ce;
+            --warn-text: #b96363;
+            --disabled: #cfd4da;
+        }
+
+        [data-theme="dark"] {
+            --bg: #111316;
+            --card-bg: #151820;
+            --text-primary: #e5e7eb;
+            --text-secondary: #cbd5e1;
+            --border: #2a2f38;
+            --muted-bg: #1a1f29;
+            --accent: #8A909E;
+            --accent-hover: #7b8190;
+            --accent-shadow: rgba(138, 144, 158, 0.25);
+            --placeholder: #94a3b8;
+            --user-msg-bg: #8A909E;
+            --user-msg-text: #ffffff;
+            --bot-msg-bg: #151820;
+            --bot-msg-border: #2a2f38;
+            --bot-msg-text: #e5e7eb;
+            --status-ready-bg: #142018;
+            --status-ready-text: #cde8d1;
+            --status-ready-border: #203226;
+            --status-error-bg: #1e1618;
+            --status-error-text: #e9c9cd;
+            --status-error-border: #3a2a2e;
+            --warn-text: #d3a3a3;
+            --disabled: #3a3f46;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f9f8f4;
+            background: var(--bg);
+            color: var(--text-primary);
             min-height: 100vh;
             padding: 20px;
             display: flex;
@@ -24,32 +77,56 @@
 
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             width: 100%;
-            background: white;
+            background: var(--card-bg);
             border-radius: 16px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             overflow: hidden;
         }
 
         .header {
-            background: #ffffff;
-            color: #1c1c1c;
+            background: var(--card-bg);
+            color: var(--text-primary);
             padding: 30px;
             text-align: center;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--border);
+            position: relative;
         }
 
         .header h1 {
             font-size: 2.8em;
             margin-bottom: 12px;
             font-weight: 600;
-            color: #1c1c1c;
+            color: var(--text-primary);
         }
 
         .header p {
             font-size: 1.3em;
-            color: #6c757d;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+
+        .theme-toggle button {
+            padding: 10px 16px;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .theme-toggle button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
         }
 
         .content {
@@ -57,40 +134,40 @@
         }
 
         .chat-container {
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 30px;
-            background: #ffffff;
+            background: var(--card-bg);
         }
 
         .chat-messages {
-            height: 320px;
+            height: 480px;
             overflow-y: auto;
             padding: 24px;
-            background: #ffffff;
+            background: var(--card-bg);
         }
 
         .message {
-            margin-bottom: 18px;
-            padding: 16px 20px;
-            border-radius: 16px;
-            max-width: 85%;
-            line-height: 1.6;
-            font-size: 17px;
+            margin-bottom: 20px;
+            padding: 18px 22px;
+            border-radius: 18px;
+            max-width: 90%;
+            line-height: 1.7;
+            font-size: 18px;
         }
 
         .user-message {
-            background: #586953;
-            color: #ffffff;
+            background: var(--user-msg-bg);
+            color: var(--user-msg-text);
             margin-left: auto;
             border-bottom-right-radius: 6px;
         }
 
         .bot-message {
-            background: #f8f9fa;
-            color: #1c1c1c;
-            border: 1px solid #dee2e6;
+            background: var(--bot-msg-bg);
+            color: var(--bot-msg-text);
+            border: 1px solid var(--bot-msg-border);
             border-bottom-left-radius: 6px;
             white-space: pre-line;
         }
@@ -98,30 +175,30 @@
         .input-container {
             display: flex;
             padding: 20px;
-            background: white;
-            border-top: 1px solid #dee2e6;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border);
         }
 
         .input-container input {
             flex: 1;
             padding: 16px 24px;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border);
             border-radius: 12px;
             font-size: 17px;
             outline: none;
             transition: all 0.2s;
-            background: #ffffff;
-            color: #1c1c1c;
+            background: var(--card-bg);
+            color: var(--text-primary);
         }
 
         .input-container input::placeholder {
-            color: #adb5bd;
+            color: var(--placeholder);
         }
 
         .input-container input:focus {
-            border-color: #586953;
-            background: #ffffff;
-            box-shadow: 0 0 0 2px rgba(88, 105, 83, 0.1);
+            border-color: var(--accent);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 2px var(--accent-shadow);
         }
 
         .calendar-selector {
@@ -130,47 +207,47 @@
             margin-bottom: 16px;
             gap: 12px;
             padding: 12px 16px;
-            background: #f8f9fa;
+            background: var(--muted-bg);
             border-radius: 12px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--border);
         }
 
         .calendar-selector label {
             font-size: 15px;
-            color: #495057;
+            color: var(--text-secondary);
             font-weight: 600;
             white-space: nowrap;
         }
 
         .calendar-selector select {
             padding: 10px 16px;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            background: #ffffff;
+            background: var(--card-bg);
             font-size: 15px;
             outline: none;
             cursor: pointer;
             min-width: 180px;
             transition: all 0.2s;
             font-weight: 500;
-            color: #343a40;
+            color: var(--text-primary);
         }
 
         .calendar-selector select:hover {
-            border-color: #586953;
-            background: #ffffff;
+            border-color: var(--accent);
+            background: var(--card-bg);
         }
 
         .calendar-selector select:focus {
-            border-color: #586953;
-            box-shadow: 0 0 0 3px rgba(88, 105, 83, 0.15);
-            background: #ffffff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-shadow);
+            background: var(--card-bg);
         }
 
         .input-container button {
             margin-left: 12px;
             padding: 16px 32px;
-            background: #586953;
+            background: var(--accent);
             color: #ffffff;
             border: none;
             border-radius: 12px;
@@ -181,27 +258,27 @@
         }
 
         .input-container button:hover {
-            background: #495845;
+            background: var(--accent-hover);
             transform: translateY(-1px);
         }
 
         .input-container button:disabled {
-            background: #adb5bd;
+            background: var(--disabled);
             cursor: not-allowed;
             transform: none;
         }
 
         .examples {
-            background: #f8f9fa;
+            background: var(--muted-bg);
             padding: 20px;
             border-radius: 12px;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border);
             margin-top: 16px;
         }
 
         .examples h3 {
             margin-bottom: 16px;
-            color: #343a40;
+            color: var(--text-primary);
             font-size: 18px;
             font-weight: 600;
             text-align: center;
@@ -215,20 +292,20 @@
 
         .example-btn {
             padding: 14px 18px;
-            background: #ffffff;
-            border: 1px solid #dee2e6;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
             border-radius: 8px;
             cursor: pointer;
             text-align: center;
             transition: all 0.2s;
             font-size: 15px;
-            color: #343a40;
+            color: var(--text-primary);
         }
 
         .example-btn:hover {
-            background: #586953;
+            background: var(--accent);
             color: #ffffff;
-            border-color: #586953;
+            border-color: var(--accent);
             transform: translateY(-1px);
         }
 
@@ -239,34 +316,34 @@
             border-radius: 8px;
             font-weight: 500;
             font-size: 14px;
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            color: #343a40;
+            background: var(--muted-bg);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
         }
 
         .status.ready {
-            background: #e8f5e8;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: var(--status-ready-bg);
+            color: var(--status-ready-text);
+            border: 1px solid var(--status-ready-border);
         }
 
         .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: var(--status-error-bg);
+            color: var(--status-error-text);
+            border: 1px solid var(--status-error-border);
         }
 
         .loading {
             display: none;
             text-align: center;
-            color: #6c757d;
+            color: var(--text-secondary);
             font-style: italic;
             padding: 20px;
             font-size: 16px;
         }
 
         .bottom-annotation {
-            color: #d33f3f;
+            color: var(--warn-text);
             font-size: 14px;
             text-align: center;
             margin-top: 20px;
@@ -278,8 +355,9 @@
 
     <div class="container">
         <div class="header">
-            <h1>🤖 AI日程管理助手</h1>
-            <p>使用自然语言管理您的日历</p>
+            <div class="theme-toggle"><button id="themeToggle">🌙 深夜模式</button></div>
+            <h1>日历助手</h1>
+            <p>更便捷地管理您的日历事件</p>
         </div>
 
         <div class="content">
@@ -324,6 +402,34 @@
 
     <script>
         let isProcessing = false;
+
+        let currentTheme = 'light';
+
+        function updateToggleLabel(theme) {
+            const btn = document.getElementById('themeToggle');
+            if (!btn) return;
+            btn.textContent = theme === 'dark' ? '☀️ 白天模式' : '🌙 深夜模式';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const t = saved || 'light';
+            currentTheme = t;
+            document.documentElement.setAttribute('data-theme', t);
+            updateToggleLabel(t);
+        }
+
+        function toggleTheme() {
+            const next = currentTheme === 'dark' ? 'light' : 'dark';
+            currentTheme = next;
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateToggleLabel(next);
+        }
+
+        initTheme();
+        const themeToggleBtn = document.getElementById('themeToggle');
+        if (themeToggleBtn) themeToggleBtn.addEventListener('click', toggleTheme);
 
         // Check agent status and load calendars on page load
         fetch('/api/calendars')
